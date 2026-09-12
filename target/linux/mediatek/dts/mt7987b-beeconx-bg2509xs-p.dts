@@ -1,0 +1,295 @@
+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+/dts-v1/;
+#include "mt7987b.dtsi"
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	model = "BeeconX BG2509XS-P";
+	compatible = "beeconx,bg2509xs-p", "mediatek,mt7987b", "mediatek,mt7987";
+
+	aliases {
+		serial0 = &uart0;
+		label-mac-device = &gmac0;
+		led-boot = &led_sys;
+		led-failsafe = &led_sys;
+		led-running = &led_sys;
+		led-upgrade = &led_sys;
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200n1 \
+			    root=/dev/mtdblock5 rootfstype=squashfs \
+			    earlycon=uart8250,mmio32,0x11000000 \
+			    pci=pcie_bus_perf";
+		stdout-path = "serial0:115200n8";
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&pio 1 GPIO_ACTIVE_LOW>;
+			debounce-interval = <10>;
+		};
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		led_sys: led@0 {
+			label = "led_sys";
+			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
+		};
+
+		led_wan_2p5g: led@1 {
+			label = "led_wan_2p5g";
+			gpios = <&pio 3 GPIO_ACTIVE_LOW>;
+		};
+
+		led_wan_1g: led@2 {
+			label = "led_wan_1g";
+			gpios = <&pio 5 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	reg_3p3v: regulator-3p3v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-3.3V";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+};
+
+&uart0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart0_pins>;
+	status = "okay";
+};
+
+&spi2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi2_flash_pins>;
+	status = "okay";
+
+	flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		vcc-supply = <&reg_3p3v>;
+		reg = <0>;
+		spi-max-frequency = <52000000>;
+		spi-tx-bus-width = <4>;
+		spi-rx-bus-width = <4>;
+
+		partition@0 {
+			label = "BL2";
+			reg = <0x0 0x40000>;
+			read-only;
+		};
+
+		art: partition@40000 {
+			label = "art";
+			reg = <0x40000 0x10000>;
+
+			nvmem-layout {
+				compatible = "fixed-layout";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				macaddr_base: macaddr@0 {
+					compatible = "mac-base";
+					reg = <0x0 0x6>;
+					#nvmem-cell-cells = <1>;
+				};
+			};
+		};
+
+		partition@50000 {
+			label = "FIP";
+			reg = <0x50000 0x100000>;
+			read-only;
+		};
+
+		partition@150000 {
+			label = "firmware";
+			reg = <0x150000 0x1EB0000>;
+		};
+	};
+};
+
+&gmac0 {
+	phy-mode = "2500base-x";
+	status = "okay";
+	phy-handle = <&phy11>;
+	nvmem-cells = <&macaddr_base 0>;
+	nvmem-cell-names = "mac-address";
+};
+
+&gmac1 {
+	phy-mode = "internal";
+	status = "okay";
+	phy-handle = <&phy15>;
+	nvmem-cells = <&macaddr_base 2>;
+	nvmem-cell-names = "mac-address";
+};
+
+&mdio {
+	reset-gpios = <&pio 48 GPIO_ACTIVE_LOW>;
+	reset-delay-us = <10000>;
+
+	phy11: phy@11 {
+		compatible = "ethernet-phy-id03a2.a411";
+		reg = <11>;
+		phy-mode = "2500base-x";
+		airoha,polarity = <1>;
+		airoha,surge = <0>;
+		airoha,phy-handle;
+		reset-gpios = <&pio 42 GPIO_ACTIVE_LOW>;
+		reset-assert-us = <10000>;
+		reset-deassert-us = <10000>;
+	};
+
+	phy15: phy@15 {
+		compatible = "ethernet-phy-ieee802.3-c45";
+		reg = <15>;
+		phy-mode = "internal";
+		pinctrl-names = "i2p5gbe-led";
+		pinctrl-0 = <&i2p5gbe_led0_pins>;
+
+		fixed-link {
+                        speed = <2500>;
+                        full-duplex;
+                        pause;
+                };
+	};
+
+	switch0: switch@1d {
+		compatible = "realtek,rtl837x";
+		reg = <0x1d>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reset-gpios = <&pio 8 GPIO_ACTIVE_HIGH>;
+		realtek,rtl8372n-led-init;
+		rtl837x,sds0mode = "10g-usxg";
+		rtl837x,sds1mode = "10g-kr";
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			/* RTL8224N 2.5G 铜口 (port 0~3) */
+			port@0 {
+				reg = <0>;
+				label = "lan7";
+				phy-mode = "internal";
+				phy-handle = <&phy8224_0>;
+			};
+
+			port@1 {
+				reg = <1>;
+				label = "lan6";
+				phy-mode = "internal";
+				phy-handle = <&phy8224_1>;
+			};
+
+			port@2 {
+				reg = <2>;
+				label = "lan5";
+				phy-mode = "internal";
+				phy-handle = <&phy8224_2>;
+			};
+
+			port@3 {
+				reg = <3>;
+				label = "lan4";
+				phy-mode = "internal";
+				phy-handle = <&phy8224_3>;
+			};
+
+			/* RTL8373N 内部 2.5G 铜口 (port 4~6) */
+			port@4 {
+				reg = <4>;
+				label = "lan3";
+				phy-mode = "internal";
+				phy-handle = <&internal_phy4>;
+			};
+
+			port@5 {
+				reg = <5>;
+				label = "lan2";
+				phy-mode = "internal";
+				phy-handle = <&internal_phy5>;
+			};
+
+			port@6 {
+				reg = <6>;
+				label = "lan1";
+				phy-mode = "internal";
+				phy-handle = <&internal_phy6>;
+			};
+
+			/* SoC 上行口 (port 7, 内部 2.5G PHY) */
+			port@7 {
+				reg = <7>;
+				label = "cpu";
+				ethernet = <&gmac1>;
+				phy-mode = "internal";
+				phy-handle = <&internal_phy7>;
+			};
+
+			/* 10G SFP+ (port 8, SDS1) */
+			port@8 {
+				reg = <8>;
+				label = "sfp";
+				phy-mode = "10gbase-r";
+				managed = "in-band-status";
+			};
+		};
+
+		mdio {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			/* RTL8224N 的 4 个 2.5G PHY */
+			phy8224_0: phy@0 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <0>;
+			};
+			phy8224_1: phy@1 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <1>;
+			};
+			phy8224_2: phy@2 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <2>;
+			};
+			phy8224_3: phy@3 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <3>;
+			};
+
+			/* RTL8373N 内部 2.5G PHY */
+			internal_phy4: phy@4 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <4>;
+			};
+			internal_phy5: phy@5 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <5>;
+			};
+			internal_phy6: phy@6 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <6>;
+			};
+			internal_phy7: phy@7 {
+				compatible = "ethernet-phy-ieee802.3-c45";
+				reg = <7>;
+			};
+		};
+	};
+};
