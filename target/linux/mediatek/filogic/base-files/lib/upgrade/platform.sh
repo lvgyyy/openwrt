@@ -315,6 +315,7 @@ platform_do_upgrade() {
 	totolink,x6000r|\
 	wavlink,wl-wn573hx3|\
 	widelantech,wap430x|\
+	beeconx,bg2509xs-p|\
 	yuncore,ax835)
 		default_do_upgrade "$1"
 		;;

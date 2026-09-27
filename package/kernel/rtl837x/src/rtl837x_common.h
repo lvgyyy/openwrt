@@ -62,6 +62,16 @@ struct rtl837x_vlan_entry {
 	u16 untag;
 };
 
+/* One failed control operation is retained until verified rollback completes. */
+struct rtl837x_vlan_snapshot {
+	rtk_vlan_entry_t row;
+	rtk_portmask_t keep;
+	rtk_vlan_t pvid, svid;
+	rtk_enable_t filtering;
+	u16 vid;
+	u8 port;
+};
+
 typedef struct rtl837x_pnswap_cfg_s {
 	uint8_t sds0_rx_swap : 1;
 	uint8_t sds0_tx_swap : 1;
@@ -100,7 +110,6 @@ struct rtk_gsw {
 	bool init_rtl8372n_leds;
 	bool quarantine_before_conduit;
 	bool reinit_cpu_serdes;
-	bool dsa_svlan;
 	bool conduit_ready;
 	char conduit_name[IFNAMSIZ];
 	u32 probe_attempts;
@@ -127,8 +136,6 @@ struct rtk_gsw {
 	unsigned int dsa_num_ports;
 	bool dsa_registered;
 	unsigned long sdk_select_count;
-	u32 port_enable_count;
-	u32 port_disable_count;
 	u32 phy_status_count;
 	char debug_reply[3][128];
 	struct dsa_switch ds;
@@ -140,10 +147,13 @@ struct rtk_gsw {
 
 	dal_mapper_t *pMapper;
 
-	struct rtl837x_vlan_entry vlan_table[4096];
-
+	/* VLAN membership is read from hardware inside each transaction. */
 	uint16_t port_pvid[RTK_MAX_NUM_OF_PORT]; // 端口PVID配置
 
+	bool bridge_state_dirty;
+	bool vlan_state_dirty;
+	struct rtl837x_vlan_snapshot vlan_rollback;
+	u8 stp_state[RTK_MAX_NUM_OF_PORT];
 	u16 tag8021q_pvid[RTK_MAX_NUM_OF_PORT];
 	bool tag8021q_pvid_valid[RTK_MAX_NUM_OF_PORT];
 	uint16_t bridge_pvid[RTK_MAX_NUM_OF_PORT];

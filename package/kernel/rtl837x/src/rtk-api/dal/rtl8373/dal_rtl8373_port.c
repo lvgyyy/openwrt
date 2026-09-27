@@ -24,6 +24,7 @@
 #include <dal_rtl8373_drv.h>
 #include <rtl8373_asicdrv.h>
 #include <linux/string.h>
+#include <linux/delay.h>
 
 rtk_uint32 PORT3_PHYAD = 0;
 rtk_uint32 PORT8_PHYAD = 0;
@@ -724,72 +725,72 @@ rtk_api_ret_t dal_rtl8373_sdsMode_set(rtk_uint32 sdsid, rtk_sds_mode_t mode)
 
 		} else if (mode == SERDES_OFF) {
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x1);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x1);
 
-			delay_loop(100);
+			mdelay(10);
 		} else if (mode == SERDES_ON) { //sds on
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x0);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x1);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x0);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x0);
-			delay_loop(100);
+			mdelay(10);
 		} else {
 			rtl8373_setAsicRegBit(RTL8373_SDS_MODE_SEL_ADDR, RTL8373_SDS_MODE_SEL_CFG_MAC3_8221B_OFFSET, DISABLED);
 			//rtl8373_setAsicRegBits(RTL8373_SDS_MODE_SEL_ADDR,RTL8373_SDS_MODE_SEL_SDS0_MODE_SEL_MASK,0x1F);
-			delay_loop(1000);
+			mdelay(10);
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x1);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x1);
 
-			delay_loop(100);
+			mdelay(10);
 			SDS_MODE_SET_SW(chiptype, sdsid, mode);
 		}
 	}
@@ -806,83 +807,83 @@ rtk_api_ret_t dal_rtl8373_sdsMode_set(rtk_uint32 sdsid, rtk_sds_mode_t mode)
 					      ENABLED); // RTL8372 set port8  polling internal resolution reg
 		} else if (mode == SERDES_OFF) {
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x1);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x1);
 
-			delay_loop(100);
+			mdelay(10);
 		} else if (mode == SERDES_ON) { //sds on
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x0);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x1);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x0);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x0);
-			delay_loop(100);
+			mdelay(10);
 		} else {
 			rtl8373_setAsicRegBit(RTL8373_SDS_MODE_SEL_ADDR, RTL8373_SDS_MODE_SEL_CFG_MAC8_8221B_OFFSET, DISABLED);
 			//rtl8373_setAsicRegBits(RTL8373_SDS_MODE_SEL_ADDR,RTL8373_SDS_MODE_SEL_SDS1_MODE_SEL_MASK,0x1F);
-			delay_loop(1000);
+			mdelay(10);
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 4, 0x1);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x1);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 6, 0x3);
-			delay_loop(100);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x3);
-			delay_loop(10);
+			mdelay(10);
 
 			dal_rtl8373_sds_regbits_write(sdsid, 0x20, 0x00, 0x3 << 10, 0x1);
 
-			delay_loop(100);
+			mdelay(10);
 			SDS_MODE_SET_SW(chiptype, sdsid, mode);
 		}
 	}
 
-	delay_loop(50);
+	mdelay(50);
 	if ((mode == SERDES_10GQXG) || (mode == SERDES_10GR) || (mode == SERDES_10GUSXG))
 		fw_reset_flow_tgr(sdsid);
 	else
 		fw_reset_flow_tgx(sdsid);
 
-	delay_loop(50);
+	mdelay(50);
 
 	return RT_ERR_OK;
 }

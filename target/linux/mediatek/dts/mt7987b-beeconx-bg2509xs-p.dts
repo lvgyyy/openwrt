@@ -175,7 +175,7 @@
 		#size-cells = <0>;
 		reset-gpios = <&pio 8 GPIO_ACTIVE_HIGH>;
 		realtek,rtl8372n-led-init;
-		rtl837x,sds0mode = "10g-usxg";
+		rtl837x,sds0mode = "10g-qxg";
 		rtl837x,sds1mode = "10g-kr";
 
 		ports {

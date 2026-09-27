@@ -3618,6 +3618,19 @@ define Device/tenda_be12-pro
 endef
 TARGET_DEVICES += tenda_be12-pro
 
+define Device/beeconx_bg2509xs-p
+  DEVICE_VENDOR := BeeconX
+  DEVICE_MODEL := BG2509XS-P
+  DEVICE_DTS := mt7987b-beeconx-bg2509xs-p
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := kmod-phy-airoha-en8811h mt7987-2p5g-phy-firmware kmod-dsa-rtl837x
+  KERNEL_SIZE := 6291456
+  IMAGE_SIZE  := 32112640
+  IMAGES := sysupgrade.bin factory.bin
+  IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-rootfs | pad-rootfs | check-size $$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += beeconx_bg2509xs-p
+
 define Device/teralink_tl3020-256mb
   DEVICE_VENDOR := Teralink
   DEVICE_MODEL := TL3020

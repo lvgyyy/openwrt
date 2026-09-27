@@ -84,6 +84,10 @@ bazis,ax3000wm)
 	ucidef_set_led_netdev "lanlink" "LANLINK" "green:lan" "eth1" "link"
 	ucidef_set_led_netdev "internet" "internet" "blue:wan-online" "wan" "link"
 	;;
+beeconx,bg2509xs-p)
+	ucidef_set_led_netdev "wan1g" "WAN 1G" "led_wan_1g" "eth0" "link_10 link_100 link_1000"
+	ucidef_set_led_netdev "wan2p5g" "WAN 2P5G" "led_wan_2p5g" "eth0" "link_2500"
+	;;
 comfast,cf-xr186)
 	ucidef_set_led_netdev "lan" "LAN" "blue:lan" "eth0" "link tx rx"
 	ucidef_set_led_netdev "wlan2g" "WLAN2G" "green:wlan" "phy0-ap0" "link tx rx"
