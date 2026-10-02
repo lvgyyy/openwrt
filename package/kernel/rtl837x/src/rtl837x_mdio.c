@@ -1194,12 +1194,24 @@ static int rtl837x_dsa_probe(struct mdio_device *mdiodev)
 	dev_info(gsw->dev, "RTL chip %s initialized: DSA cpu-port:%u cpu-sds:%d valid-port-mask:0x%x configured-port-mask:0x%x\n", gsw->chip_name, gsw->cpu_port, gsw->cpu_sds, gsw->valid_port_mask, gsw->configured_port_mask);
 	dev_info(gsw->dev, "serialized RTL8373-family SDK context selected for MDIO address %u\n", gsw->mdio_addr);
 
-	ret = rtl837x_dsa_register(gsw);
-	if (ret) {
-		dev_err(gsw->dev, "DSA registration failed: %d\n", ret);
-		if (master)
-			dev_put(master);
-		return ret;
+	if (of_property_read_bool(np, "realtek,dumb-switch")) {
+		rtl837x_sdk_lock(gsw);
+		ret = rtl837x_setup_dumb_switch(gsw);
+		rtl837x_sdk_unlock(gsw);
+		if (ret) {
+			dev_err(gsw->dev, "dumb switch setup failed: %d\n", ret);
+			if (master)
+				dev_put(master);
+			return ret;
+		}
+	} else {
+		ret = rtl837x_dsa_register(gsw);
+		if (ret) {
+			dev_err(gsw->dev, "DSA registration failed: %d\n", ret);
+			if (master)
+				dev_put(master);
+			return ret;
+		}
 	}
 	dev_set_drvdata(dev, gsw);
 

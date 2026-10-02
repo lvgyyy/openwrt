@@ -1,0 +1,72 @@
+# RTL8238B PoE Control 中文翻译
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "RTL8238B PoE Control"
+msgstr "RTL8238B PoE 控制"
+
+msgid "Use Save & Apply to apply RTL8238B PoE configuration changes."
+msgstr "使用保存并应用来使 RTL8238B PoE 配置生效。"
+
+msgid "Enable RTL8238B PoE"
+msgstr "启用 RTL8238B PoE"
+
+msgid "PoE power budget (W)"
+msgstr "PoE 功率预算 (W)"
+
+msgid "PoE power budget in Watts."
+msgstr "PoE 功率预算（单位：瓦特）。"
+
+msgid "PoE debug logging"
+msgstr "PoE 调试日志"
+
+msgid "PoE output (LAN%d)"
+msgstr "PoE 输出（LAN%d）"
+
+msgid "PoE output enabled"
+msgstr "PoE 输出已启用"
+
+msgid "PoE output disabled"
+msgstr "PoE 输出已禁用"
+
+msgid "PoE controller: %s, power consumption: %s W, power budget: %s W"
+msgstr "PoE 控制器: %s, 当前功耗: %s W, 功率预算: %s W"
+
+msgid "Unable to read PoE status. The controller may be unavailable or still initializing."
+msgstr "无法读取 PoE 状态。控制器可能不可用或仍在初始化中。"
+
+msgid "PoE power off"
+msgstr "PoE 已关闭"
+
+msgid "PoE power good"
+msgstr "PoE 供电正常"
+
+msgid "PoE not powered"
+msgstr "PoE 未供电"
+
+msgid "PoE LAN port"
+msgstr "PoE LAN 端口"
+
+msgid "PoE status"
+msgstr "PoE 状态"
+
+msgid "PoE power"
+msgstr "PoE 功率"
+
+msgid "PoE voltage"
+msgstr "PoE 电压"
+
+msgid "PoE current"
+msgstr "PoE 电流"
+
+msgid "PoE log"
+msgstr "PoE 日志"
+
+msgid "Clear PoE log"
+msgstr "清除 PoE 日志"
+
+msgid "PoE log clear failed."
+msgstr "PoE 日志清除失败。"
+
+msgid "Unable to clear PoE log: %s"
+msgstr "无法清除 PoE 日志: %s"

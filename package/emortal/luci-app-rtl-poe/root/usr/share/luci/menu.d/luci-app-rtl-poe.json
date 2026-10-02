@@ -1,0 +1,13 @@
+{
+	"admin/services/rtl-poe": {
+		"title": "RTL8238B PoE Control",
+		"order": 30,
+		"action": {
+			"type": "view",
+			"path": "rtl-poe/overview"
+		},
+		"depends": {
+			"acl": [ "luci-app-rtl-poe" ]
+		}
+	}
+}

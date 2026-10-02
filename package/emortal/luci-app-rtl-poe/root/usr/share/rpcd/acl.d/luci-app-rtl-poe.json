@@ -1,0 +1,16 @@
+{
+	"luci-app-rtl-poe": {
+		"description": "Grant UCI and exec access to RTL8238B PoE control",
+		"read": {
+			"uci": [ "rtl-poe" ]
+		},
+		"write": {
+			"uci": [ "rtl-poe" ],
+			"file": {
+				"/usr/libexec/rtl-poe-status": [ "exec" ],
+				"/usr/libexec/rtl-poe-log": [ "exec" ],
+				"/usr/libexec/rtl-poe-log-clear": [ "exec" ]
+			}
+		}
+	}
+}

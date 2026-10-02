@@ -171,6 +171,7 @@ extern int rtl837x_debug_proc_deinit(struct rtk_gsw *gsw);
 extern int rtl837x_dsa_register(struct rtk_gsw *gsw);
 extern void rtl837x_dsa_unregister(struct rtk_gsw *gsw);
 extern void rtl837x_dsa_shutdown(struct rtk_gsw *gsw);
+extern int rtl837x_setup_dumb_switch(struct rtk_gsw *gsw);
 extern int rtl837x_gpiochip_init(struct rtk_gsw *gsw);
 
 unsigned int mii_mgr_read(unsigned int phy_addr, unsigned int phy_register, unsigned int *read_data);

@@ -1,0 +1,18 @@
+# RTL8238B PoE PSE UCI 配置
+# 默认值基于 RTL8238B Host Command Guide Rev.1.7
+
+config poe 'main'
+	option enabled '1'
+	option budget_mw '120000'
+	option debug '0'
+
+	# 端口使能 (1=使能, 0=禁用)
+	# 通道 0-6 = LAN1-7 PoE供电, 通道7未使用
+	option port_lan1 '1'
+	option port_lan2 '1'
+	option port_lan3 '1'
+	option port_lan4 '1'
+	option port_lan5 '1'
+	option port_lan6 '1'
+	option port_lan7 '1'
+	option port_lan8 '0'

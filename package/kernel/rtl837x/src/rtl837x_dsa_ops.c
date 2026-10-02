@@ -602,6 +602,99 @@ static int rtl837x_seed_vlan_table(struct rtk_gsw *gsw)
 	return 0;
 }
 
+int rtl837x_setup_dumb_switch(struct rtk_gsw *gsw)
+{
+	int port, ret;
+
+	/* Plain ethernet on the CPU uplink: no 0x8899 CPU tag, no DSA tag. */
+	ret = rtk_cpu_externalCpuPort_set(gsw->cpu_port);
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	ret = rtk_cpuTag_enable_set(EXTERNAL_CPU, DISABLED);
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	/* L2/FDB engine. */
+	ret = rtk_l2_init();
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	ret = rtk_l2_table_clear();
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	ret = rtk_l2_aging_set(300);
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	ret = rtk_stat_global_reset();
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	/* VLAN 1 = all ports untagged, PVID 1. */
+	ret = rtk_vlan_reset();
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	ret = rtk_vlan_init();
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	ret = rtk_vlan_egrFilterEnable_set(ENABLED);
+	if (ret)
+		return rtl837x_to_errno(ret);
+
+	ret = rtl837x_seed_vlan_table(gsw);
+	if (ret)
+		return ret;
+
+	/* Flat single broadcast domain: open the isolation matrix fully. */
+	for (port = 0; port < RTK_MAX_NUM_OF_PORT; port++) {
+		if (!rtl837x_valid_port(gsw, port))
+			continue;
+		ret = rtk_port_isolation_set(port, gsw->configured_port_mask);
+		if (ret)
+			return rtl837x_to_errno(ret);
+	}
+
+	/* Forward on every port, including the CPU uplink. */
+	for (port = 0; port < RTK_MAX_NUM_OF_PORT; port++) {
+		if (!rtl837x_valid_port(gsw, port))
+			continue;
+		ret = rtl837x_set_stp_state(gsw, port, BR_STATE_FORWARDING);
+		if (ret)
+			return ret;
+	}
+
+	/* The external RTL8224N PHYs don't negotiate on their own after the
+	 * SDK power-up; restart autoneg on every copper user port. */
+	{
+		rtk_port_phy_ability_t ability = { 0 };
+
+		ability.Full_10 = 1;
+		ability.Full_100 = 1;
+		ability.Full_1000 = 1;
+		ability.adv_2_5G = 1;
+		ability.FC = 1;
+		ability.AsyFC = 1;
+
+		for (port = 0; port < gsw->num_ports; port++) {
+			if (port == gsw->cpu_port || port == 8)
+				continue;
+			if (!rtl837x_valid_port(gsw, port))
+				continue;
+
+			ret = rtk_phy_common_c45_autoSpeed_set(port, &ability);
+			if (ret)
+				dev_warn(gsw->dev, "autoneg setup failed on port %d: %d\n",
+					 port, rtl837x_to_errno(ret));
+		}
+	}
+
+	return 0;
+}
+
 static enum dsa_tag_protocol rtl837x_get_tag_protocol(struct dsa_switch *ds, int port, enum dsa_tag_protocol mprot)
 {
 	return DSA_TAG_PROTO_RTL837X_8021AD;
